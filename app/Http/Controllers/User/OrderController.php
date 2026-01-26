@@ -22,7 +22,8 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('payment.index', compact('orders'));
+        // ✅ GANTI dari 'payment.index' ke 'orders.index'
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -100,12 +101,17 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Order $order)
     {
-        $order = Order::with(['event', 'detailOrders.tiket', 'paymentType'])
-            ->where('user_id', Auth::id())
-            ->findOrFail($id);
+        // Cek apakah order milik user yang sedang login
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
+        }
 
-        return view('payment.show', compact('order'));
+        // Load relasi yang dibutuhkan
+        $order->load(['event', 'detailOrders.tiket', 'paymentType']);
+
+        // ✅ GANTI dari 'payment.show' ke 'orders.show'
+        return view('orders.show', compact('order'));
     }
 }
