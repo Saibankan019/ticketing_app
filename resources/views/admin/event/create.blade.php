@@ -155,17 +155,17 @@
                                 required />
                         </div>
 
-                        <!-- Lokasi -->
+                        <!-- Lokasi - DROPDOWN -->
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-cyber">[ Lokasi ]</span>
                             </label>
-                            <input
-                                type="text"
-                                name="lokasi"
-                                placeholder="Contoh: Stadion Utama"
-                                class="input cyber-input w-full"
-                                required />
+                            <select name="lokasi_id" class="select cyber-input w-full" required>
+                                <option value="" disabled selected>Pilih Lokasi</option>
+                                @foreach ($lokasis as $lokasi)
+                                    <option value="{{ $lokasi->id }}">{{ $lokasi->nama_lokasi }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 

@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-use App\Models\Event;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Event;
 use App\Models\Kategori;
+use App\Models\Lokasi;
 use Illuminate\Support\Str;
 
 class EventController extends Controller
@@ -13,10 +15,10 @@ class EventController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
-	$events = Event::all();
-	return view('admin.event.index', compact('events'));
-}
+    {
+        $events = Event::with(['kategori', 'lokasi'])->get();
+        return view('admin.event.index', compact('events'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -24,11 +26,13 @@ class EventController extends Controller
     public function create()
     {
         $categories = Kategori::all();
-        return view('admin.event.create', compact('categories'));
+        $lokasis = Lokasi::all();
+
+        return view('admin.event.create', compact('categories', 'lokasis'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created event.
      */
     public function store(Request $request)
     {
@@ -36,36 +40,42 @@ class EventController extends Controller
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'tanggal_waktu' => 'required|date',
-            'lokasi' => 'required|string|max:255',
+            'lokasi_id' => 'required|exists:lokasis,id',
             'kategori_id' => 'required|exists:kategoris,id',
             'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Handle file upload
+        // Upload gambar
         if ($request->hasFile('gambar')) {
-            $imageName = time().'.'.$request->gambar->extension();
+            $imageName = time() . '.' . $request->gambar->extension();
             $request->gambar->move(public_path('images/events'), $imageName);
             $validatedData['gambar'] = $imageName;
         }
 
-        $validatedData['user_id'] = auth()->user()->id ?? null;
+        $validatedData['user_id'] = auth()->id();
 
         Event::create($validatedData);
 
-        return redirect()->route('admin.events.index')->with('success', 'Event berhasil ditambahkan.');
+        return redirect()->route('admin.events.index')
+            ->with('success', 'Event berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        $event = Event::findOrFail($id);
-        $categories = Kategori::all();
-        $tickets = $event->tikets;
+{
+    $event = Event::with(['kategori', 'lokasi', 'tikets'])->findOrFail($id);
+    $categories = Kategori::all();
+    $tickets = $event->tikets;   
 
-        return view('admin.event.show', compact('event', 'categories', 'tickets'));
-    }
+    return view('admin.event.show', compact(
+        'event',
+        'categories',
+        'tickets'
+    ));
+}
+
 
     /**
      * Show the form for editing the specified resource.
@@ -74,49 +84,48 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($id);
         $categories = Kategori::all();
-        return view('admin.event.edit', compact('event', 'categories'));
+        $lokasis = Lokasi::all();
+
+        return view('admin.event.edit', compact('event', 'categories', 'lokasis'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource.
      */
     public function update(Request $request, string $id)
     {
-        try {
-            $event = Event::findOrFail($id);
+        $event = Event::findOrFail($id);
 
-            $validatedData = $request->validate([
-                'judul' => 'required|string|max:255',
-                'deskripsi' => 'required|string',
-                'tanggal_waktu' => 'required|date',
-                'lokasi' => 'required|string|max:255',
-                'kategori_id' => 'required|exists:kategoris,id',
-                'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            ]);
+        $validatedData = $request->validate([
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'tanggal_waktu' => 'required|date',
+            'lokasi_id' => 'required|exists:lokasis,id',
+            'kategori_id' => 'required|exists:kategoris,id',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-            // Handle file upload
-            if ($request->hasFile('gambar')) {
-                $imageName = time().'.'.$request->gambar->extension();
-                $request->gambar->move(public_path('images/events'), $imageName);
-                $validatedData['gambar'] = $imageName;
-            }
-
-            $event->update($validatedData);
-
-            return redirect()->route('admin.events.index')->with('success', 'Event berhasil diperbarui.');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui event: ' . $e->getMessage()]);
+        if ($request->hasFile('gambar')) {
+            $imageName = time() . '.' . $request->gambar->extension();
+            $request->gambar->move(public_path('images/events'), $imageName);
+            $validatedData['gambar'] = $imageName;
         }
+
+        $event->update($validatedData);
+
+        return redirect()->route('admin.events.index')
+            ->with('success', 'Event berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource.
      */
     public function destroy(string $id)
     {
         $event = Event::findOrFail($id);
         $event->delete();
 
-        return redirect()->route('admin.events.index')->with('success', 'Event berhasil dihapus.');
+        return redirect()->route('admin.events.index')
+            ->with('success', 'Event berhasil dihapus.');
     }
 }

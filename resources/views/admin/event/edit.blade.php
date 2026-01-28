@@ -118,13 +118,20 @@
                                 value="{{ $event->tanggal_waktu->format('Y-m-d\TH:i') }}" required />
                         </div>
 
-                        <!-- Lokasi -->
+                        <!-- Lokasi - DROPDOWN -->
                         <div class="form-control">
                             <label class="label">
                                 <span class="label-cyber">[ Lokasi ]</span>
                             </label>
-                            <input type="text" name="lokasi" placeholder="Contoh: Stadion Utama"
-                                class="input cyber-input w-full" value="{{ $event->lokasi }}" required />
+                            <select name="lokasi_id" class="select cyber-input w-full" required>
+                                <option value="" disabled>Pilih Lokasi</option>
+                                @foreach ($lokasis as $lokasi)
+                                    <option value="{{ $lokasi->id }}" 
+                                        {{ $lokasi->id == $event->lokasi_id ? 'selected' : '' }}>
+                                        {{ $lokasi->nama_lokasi }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 

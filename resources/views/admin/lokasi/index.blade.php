@@ -1,4 +1,4 @@
-<x-layouts.admin title="Manajemen Event">
+<x-layouts.admin title="Manajemen Lokasi">
     <style>
         @keyframes glow {
             0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
@@ -114,17 +114,17 @@
                     <div class="flex items-center gap-3 mb-2">
                         <div class="h-8 w-1 bg-gradient-to-b from-blue-500 to-purple-500"></div>
                         <h1 class="text-3xl md:text-4xl font-black uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                            Manajemen Event
+                            Manajemen Lokasi
                         </h1>
                     </div>
                     <p class="text-sm text-gray-400 ml-4 pl-3 border-l border-blue-500/30">
-                        [ DATA EVENT TERSEDIA ]
+                        [ DATA LOKASI TERSEDIA ]
                     </p>
                 </div>
 
-                <a href="{{ route('admin.events.create') }}"
+                <a href="{{ route('admin.lokasi.create') }}"
                    class="cyber-btn px-6 py-3 text-white rounded-lg font-semibold uppercase tracking-wide">
-                    <span class="relative z-10">+ Tambah Event</span>
+                    <span class="relative z-10">+ Tambah Lokasi</span>
                 </a>
             </div>
         </div>
@@ -136,35 +136,26 @@
                     <thead class="cyber-table-header text-blue-100">
                         <tr>
                             <th class="text-xs uppercase tracking-wider">No</th>
-                            <th class="text-xs uppercase tracking-wider w-1/3">Judul</th>
-                            <th class="text-xs uppercase tracking-wider">Kategori</th>
-                            <th class="text-xs uppercase tracking-wider">Tanggal</th>
-                            <th class="text-xs uppercase tracking-wider">Lokasi</th>
+                            <th class="text-xs uppercase tracking-wider">Nama Lokasi</th>
+                            <th class="text-xs uppercase tracking-wider">Dibuat Pada</th>
+                            <th class="text-xs uppercase tracking-wider">Terakhir Diupdate</th>
                             <th class="text-xs uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody class="text-gray-300">
-                        @forelse ($events as $index => $event)
+                        @forelse ($lokasis as $index => $lokasi)
                             <tr class="cyber-table-row">
                                 <th class="text-blue-400">{{ $index + 1 }}</th>
-                                <td class="font-medium">{{ $event->judul }}</td>
-                                <td>
-                                    <span class="px-3 py-1 bg-purple-600/30 border border-purple-500/50 rounded-full text-xs font-semibold">
-                                        {{ $event->kategori->nama }}
-                                    </span>
+                                <td class="font-medium">{{ $lokasi->nama_lokasi }}</td>
+                                <td class="text-sm text-gray-400">
+                                    {{ $lokasi->created_at->format('d M Y, H:i') }} WIB
                                 </td>
-                                <td class="text-gray-400">{{ $event->tanggal_waktu->format('d M Y') }}</td>
-                                <td class="text-sm">
-                                    {{ $event->lokasi->nama_lokasi ?? 'Lokasi tidak tersedia' }}
+                                <td class="text-sm text-gray-400">
+                                    {{ $lokasi->updated_at->format('d M Y, H:i') }} WIB
                                 </td>
                                 <td class="flex gap-2">
-                                    <a href="{{ route('admin.events.show', $event->id) }}"
-                                       class="px-3 py-1.5 text-xs bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-semibold transition-all hover:scale-105">
-                                        Detail
-                                    </a>
-
-                                    <a href="{{ route('admin.events.edit', $event->id) }}"
+                                    <a href="{{ route('admin.lokasi.edit', $lokasi->id) }}"
                                        class="px-3 py-1.5 text-xs bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-all hover:scale-105">
                                         Edit
                                     </a>
@@ -172,20 +163,20 @@
                                     <button
                                         class="px-3 py-1.5 text-xs cyber-btn-danger text-white rounded-lg font-semibold transition-all hover:scale-105"
                                         onclick="openDeleteModal(this)"
-                                        data-id="{{ $event->id }}">
+                                        data-id="{{ $lokasi->id }}">
                                         Hapus
                                     </button>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-12">
+                                <td colspan="5" class="text-center py-12">
                                     <div class="text-gray-500">
-                                        <div class="text-5xl mb-3">🎭</div>
+                                        <div class="text-5xl mb-3">📍</div>
                                         <p class="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-                                            BELUM ADA EVENT
+                                            BELUM ADA LOKASI
                                         </p>
-                                        <p class="text-sm mt-2">Tambahkan event pertama Anda</p>
+                                        <p class="text-sm mt-2">Tambahkan lokasi pertama Anda</p>
                                     </div>
                                 </td>
                             </tr>
@@ -206,7 +197,7 @@
                 <div class="flex items-center gap-2 mb-1">
                     <div class="h-6 w-1 bg-gradient-to-b from-red-500 to-orange-500"></div>
                     <h3 class="text-xl font-black uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
-                        Hapus Event
+                        Hapus Lokasi
                     </h3>
                 </div>
                 <p class="text-xs text-gray-400 ml-3 pl-2 border-l border-red-500/30">
@@ -215,7 +206,7 @@
             </div>
 
             <div class="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
-                <p class="text-gray-300 text-sm">Apakah Anda yakin ingin menghapus event ini?</p>
+                <p class="text-gray-300 text-sm">Apakah Anda yakin ingin menghapus lokasi ini?</p>
                 <p class="text-red-400 text-xs mt-2">⚠️ Tindakan ini tidak dapat dibatalkan</p>
             </div>
 
@@ -236,7 +227,7 @@
         function openDeleteModal(button) {
             const id = button.dataset.id
             const form = document.querySelector('#delete_modal form')
-            form.action = `/admin/events/${id}`
+            form.action = `/admin/lokasi/${id}`
             delete_modal.showModal()
         }
     </script>

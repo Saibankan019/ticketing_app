@@ -86,7 +86,7 @@
                            value="{{ $event->tanggal_waktu->format('Y-m-d\TH:i') }}" disabled>
                 </div>
 
-                {{-- Lokasi --}}
+                {{-- Lokasi - Dari Database --}}
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text text-blue-400 font-semibold">Lokasi</span>
@@ -95,8 +95,8 @@
                            class="input input-bordered w-full
                                   bg-gray-950 text-white
                                   border-blue-500/30
-                                  disabled:opacity-80"
-                           value="{{ $event->lokasi }}" disabled>
+                                  disabled:opacity-80 disabled:text-white"
+                           value="{{ $event->lokasi->nama_lokasi ?? 'Lokasi tidak tersedia' }}" disabled>
                 </div>
 
                 {{-- Gambar --}}

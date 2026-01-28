@@ -7,7 +7,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\HistoriesController;
 use App\Http\Controllers\Admin\TiketController;
-use App\Http\Controllers\Admin\PaymentTypeController; // ✅ TAMBAHKAN INI
+use App\Http\Controllers\Admin\PaymentTypeController;
+use App\Http\Controllers\Admin\LokasiController; // ✅ TAMBAHKAN INI
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\EventController as UserEventController;
 use App\Http\Controllers\User\OrderController;
@@ -42,7 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('categories', CategoryController::class);
         Route::resource('events', EventController::class);
         Route::resource('tickets', TiketController::class);
-        Route::resource('payment-types', PaymentTypeController::class); // ✅ SUDAH BENAR
+        Route::resource('payment-types', PaymentTypeController::class);
+        Route::resource('lokasi', LokasiController::class); // ✅ PERBAIKAN: Hapus 'admin/' prefix karena sudah ada di group
 
         // Custom Routes
         Route::get('/histories', [HistoriesController::class, 'index'])->name('histories.index');

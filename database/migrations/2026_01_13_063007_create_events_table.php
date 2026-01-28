@@ -12,10 +12,16 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('kategori_id')->constrained()->onDelete('cascade');
+
             $table->string('judul');
             $table->text('deskripsi');
-            $table->string('lokasi');
             $table->dateTime('tanggal_waktu');
+
+            $table->foreignId('lokasi_id')
+                ->nullable()
+                ->constrained('lokasis')
+                ->onDelete('set null');
+
             $table->string('gambar')->nullable();
             $table->timestamps();
         });
